@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro" >
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div th:replace="~{commons/commons::topbar}"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+<!--				通过传参active='list.html'，使得点击该按钮时高亮，在commons中的源代码进行判断-->
+				<div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+<!--					添加员工的标签，默认是get方法会其寻找getmapping注解的/emp的controller-->
+					<div shiro:hasPermission="admin">
+						<h2><a th:href="@{/emp}" class="btn btn-sm btn-success">Add Employee</a></h2>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped table-sm">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>lastName</th>
+									<th>email</th>
+									<th>gender</th>
+									<th>department</th>
+									<th>birth</th>
+									<th>operation</th>
+								</tr>
+							</thead>
+							<tbody>
+<!--								循环从model传回的employees属性中取出每个employee对象，然后根据相应方法取出数据-->
+								<tr th:each="employee:${employees}">
+									<td th:text="${employee.getId()}"></td>
+<!--									这种取法也可以，当数据放在标签中间时使用，但通常放在标签内使用th：text取数据-->
+									<td>[[${employee.getLastName()}]]</td>
+									<td th:text="${employee.getEmail()}"></td>
+<!--									在显示数据时性别不能显示0，1，因此这里用了三元判断根据0,1决定显示male或female-->
+									<td th:text="${employee.getGender()==0?'male':'female'}"></td>
+<!--									显示部门时也不能显示对象Department因此是调用方法得到部门名称机芯显示-->
+									<td th:text="${employee.getDepartment().getDepartmentName()}"></td>
+<!--									显示日期的格式要和配置文件application.properties中一致-->
+									<td th:text="${#dates.format(employee.getBirth(), 'MM/dd/yyyy')}"></td>
+									<div shiro:hasPermission="admin">
+										<td>
+<!--			两个a标签跳转到修改和删除的controller，注意这种拼接url的方式属于restful风格，即直接/参数-->
+											<a class="btn btn-sm btn-primary" th:href="@{/emp/}+${employee.getId()}">edit</a>
+											<a class="btn btn-sm btn-danger" th:href="@{/delete/}+${employee.getId()}">delete</a>
+										</td>
+									</div>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+		<script>
+			feather.replace()
+		</script>
+
+	</body>
+
+</html>

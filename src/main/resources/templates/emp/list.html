@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.thymeleaf.org/thymeleaf-extras-shiro" >
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>Dashboard Template for Bootstrap</title>
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div th:replace="~{commons/commons::topbar}"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+
+				<div th:replace="~{commons/commons::sidebar(active='list.html')}"></div>
+
+				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+					<!--here use shiro t with thymeleaf to decide if current user has permission to add employee-->
+					<div shiro:hasPermission="admin">
+						<h2><a th:href="@{/emp}" class="btn btn-sm btn-success">Add Employee</a></h2>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-striped table-sm">
+							<thead>
+								<tr>
+									<th>id</th>
+									<th>lastName</th>
+									<th>email</th>
+									<th>gender</th>
+									<th>department</th>
+									<th>birth</th>
+									<th>operation</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!--use th:each loop to get every employee's information, then get the perperties-->
+								<tr th:each="employee:${employees}">
+									<td th:text="${employee.getId()}"></td>
+
+									<td>[[${employee.getLastName()}]]</td>
+									<td th:text="${employee.getEmail()}"></td>
+									<!--here use the ternary operation to decide the gender, if 0 is male, 1 is female-->
+									<td th:text="${employee.getGender()==0?'male':'female'}"></td>
+									<!--here must show the department name-->
+									<td th:text="${employee.getDepartment().getDepartmentName()}"></td>
+									<!--format the date, need to be same as date format in application.yml-->
+									<td th:text="${#dates.format(employee.getBirth(), 'MM/dd/yyyy')}"></td>
+									<!--here use shiro t with thymeleaf to decide if current user has permission to edit employee-->
+									<div shiro:hasPermission="admin">
+										<td>
+										<!--here in the th:href, use the RESTFul API to pass parameter-->
+											<a class="btn btn-sm btn-primary" th:href="@{/emp/}+${employee.getId()}">edit</a>
+											<a class="btn btn-sm btn-danger" th:href="@{/delete/}+${employee.getId()}">delete</a>
+										</td>
+									</div>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</main>
+			</div>
+		</div>
+
+		<!-- Bootstrap core JavaScript
+    ================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script type="text/javascript" th:src="@{/js/jquery-3.2.1.slim.min.js}"></script>
+		<script type="text/javascript" th:src="@{/js/popper.min.js}"></script>
+		<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+
+		<!-- Icons -->
+		<script type="text/javascript" th:src="@{/js/feather.min.js}"></script>
+		<script>
+			feather.replace()
+		</script>
+
+	</body>
+
+</html>

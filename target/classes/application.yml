@@ -1,0 +1,26 @@
+server:
+  port: 9000
+
+spring:
+  #clear the cache in thymeleaf
+  thymeleaf:
+    cache: false
+  #i18n base package path
+  messages:
+    basename: i18n.login
+  #formate the date
+  mvc:
+    format:
+      date: MM/dd/yyyy
+  datasource:
+    username: root
+    password: billy
+    url: jdbc:mysql://localhost:3306/empms?useSSL=false&rewriteBatchedStatements=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  type-aliases-package: com.billy.pojo
+  mapper-locations:
+    - classpath:mybatis/mapper/*.xml
+
+
